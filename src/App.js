@@ -1,8 +1,10 @@
 import React from 'react';
+import { FreeTextItem, SingleChoiceItem, MultiChoiceItem, Survey } from './survey.js';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
@@ -18,6 +20,11 @@ function App() {
         >
           Learn React
         </a>
+        <div>
+          <FreeTextItem ordinal="1" questionText="Question?" answerText="" />
+          
+            
+        </div>
       </header>
     </div>
   );

@@ -1,0 +1,33 @@
+.free-text-item {
+  line-height: 105%;
+}
+
+.question-label {
+  font-size: 16;
+}
+
+.text-input {
+  font-size: 14;
+  margin-top: 10px;
+}
+
+.single-choice-list {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.survey-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.survey-button {
+  margin-left: 10px;
+  margin-right: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
