@@ -5,6 +5,7 @@ class SurveyItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            itemType: '',
             ordinal: 0,
             questionText: '',
             answerValue: '',
@@ -16,6 +17,7 @@ class FreeTextItem extends SurveyItem {
     constructor(props) {
         super(props);
         this.state = {
+            itemType: 'free-text-item',
             ordinal: props.ordinal,
             questionText: props.questionText,
             answerValue: props.answerValue,
@@ -29,16 +31,14 @@ class FreeTextItem extends SurveyItem {
 
         return (
             <div className="free-text-item">
-                <p className="question-label">
-                    {this.state.questionText}<br/>
-                    <input
-                      id="answer-text"
-                      className="text-input"
-                      type="text"
-                      value={text}
-                      onChange={this.handleTextChange}
-                      />
-                </p>
+                <label className="survey-label" htmlFor="answer-text">{this.state.questionText}</label>
+                <input
+                    id="answer-text"
+                    className="text-input"
+                    type="text"
+                    value={text}
+                    onChange={this.handleTextChange}
+                />
             </div>            
         );
     }
@@ -56,8 +56,8 @@ class SingleChoiceItem extends SurveyItem {
     constructor(props) {
         super(props);
         this.state = {
+            itemType: 'single-choice-item',
             ordinal: props.ordinal,
-            choiceName: props.choiceName,
             questionText: props.questionText,
             answerOptions: [],
             selectedOption: props.SelectedOption
@@ -72,14 +72,12 @@ class SingleChoiceItem extends SurveyItem {
 
         for (let i = 0; i < this.state.answerOptions.length; i++) {
             var isChecked =  i === this.state.selectedOption;
-            var itemKey = this.state.choiceName.concat("-", i.toString());
             choices = choices.concat(
-                <li key={itemKey}>
+                <li key={i}>
                     <label>{this.state.answerOptions[i]}</label>
                     <input
                       type="radio"
-                      id={itemKey}
-                      name={this.state.choiceName}
+                      id={i}
                       value={this.state.answerOptions[i]}
                       checked={isChecked}
                       onChange={this.handleCheckChange}
@@ -90,7 +88,7 @@ class SingleChoiceItem extends SurveyItem {
 
         return (
             <div className="single-choice-item">
-                <label className="question-label">{this.state.questionText}</label>
+                <label className="survey-label">{this.state.questionText}</label>
                 <ul className="single-choice-list">{choices}</ul>
             </div>            
         );
@@ -98,7 +96,7 @@ class SingleChoiceItem extends SurveyItem {
 
     handleCheckChange(event) {
         for (var i = 0; i < this.state.answerOptions.length; i++) {
-            if (event.target == this.state.answerOptions[i]) {
+            if (event.target === this.state.answerOptions[i]) {
                 this.setState({
                     selectedOption: i
                 })
@@ -112,13 +110,16 @@ class MultiChoiceItem extends SurveyItem {
     constructor(props) {
         super(props);
         this.state = {
+            itemType: 'multi-choice-item',
             ordinal: props.ordinal,
-            choiceName: props.choiceName,
             questionText: props.questionText,
-            answerOptions: []
+            answerOptions: [],
+            selectedOptions: []
         };
 
         this.state.answerOptions = this.state.answerOptions.concat(props.answerOptions);
+        this.state.selectedOption = this.state.selectedOptions.concat(props.selectedOptions);
+        this.handleCheckChange = this.handleCheckChange.bind(this);
     }
 
     render() {
@@ -126,13 +127,12 @@ class MultiChoiceItem extends SurveyItem {
 
         for (let i = 0; i < this.state.answerOptions.length; i++) {
             var isChecked =  i === this.state.selectedOption;
-            var itemKey = this.state.choiceName.concat("-", i.toString());
             choices = choices.concat(
-                <li key={itemKey}>
-                    <label id={itemKey}>{this.state.answerOptions[i]}</label>
+                <li key={i}>
+                    <label id={i}>{this.state.answerOptions[i]}</label>
                     <input
                       type="checkbox"
-                      id={itemKey}
+                      id={i}
                       name={this.state.choiceName}
                       value={this.state.answerOptions[i]}
                       checked={isChecked}
@@ -144,7 +144,7 @@ class MultiChoiceItem extends SurveyItem {
 
         return (
             <div className="multi-choice-item">
-                <label className="question-label">{this.state.questionText}</label>
+                <label className="survey-label">{this.state.questionText}</label>
                 <ul className="multi-choice-list">{choices}</ul>
             </div>            
         );
@@ -204,7 +204,33 @@ class Survey extends React.Component {
             currentItemIndex: 0
         }
 
-        var sortedItems = props.items;
+        var rawItems = props.items;
+        var sortedItems = [];
+        for (var i = 0; i < rawItems.length; i++) {
+            var item = rawItems[i];
+            if (item && item.state && item.state.itemType === 'free-text-item') {
+                sortedItems = sortedItems.concat(new FreeTextItem({
+                    ordinal: item.state.ordinal,
+                    questionText: item.state.questionText,
+                    answerValue: item.state.answerValue
+                }));
+            } else if (item && item.state && item.state.itemType === 'single-choice-item') {
+                sortedItems = sortedItems.concat(new SingleChoiceItem({
+                    ordinal: item.state.ordinal,
+                    questionText: item.state.questionText,
+                    answerOptions: item.state.answerOptions,
+                    selectedOption: item.state.selectedOption
+                }));
+            } else if (item && item.state && item.state.itemType === 'multi-choice-item') {
+                sortedItems = sortedItems.concat(new MultiChoiceItem({
+                    ordinal: item.state.ordinal,
+                    questionText: item.state.questionText,
+                    answerOptions: item.state.answerOptions,
+                    selectedOption: item.state.selectedOption
+                }));
+            }
+        }
+
         sortedItems.sort(compareItems);
         this.state.items = sortedItems;
         this.state.currentItem = sortedItems[0];

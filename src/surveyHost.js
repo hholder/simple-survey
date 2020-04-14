@@ -1,8 +1,8 @@
 import React from 'react';
-import { FreeTextItem, SingleChoiceItem, MultiChoiceItem, Survey } from './survey.js';
+import { Survey } from './survey.js';
 import './survey.css';
 
-const MongoClient = require('mongodb').MongoClient;
+var getReq = null;
 
 class SurveyHost extends React.Component {
   constructor(props) {
@@ -10,52 +10,31 @@ class SurveyHost extends React.Component {
     this.state = {
       surveyId: props.surveyId,
       survey: new Survey({items: []}),
-      mongoClient: null,
       error: null,
     }
 
-    this.state.survey = new Survey({
-      items:
-      [
-        new FreeTextItem({
-          ordinal: 1,
-          questionText: 'Question 1',
-          answerText: ''
-        }),
-        new SingleChoiceItem({
-          ordinal: 2,
-          choiceName: 'choice1',
-          questionText: 'Question 2',
-          answerOptions: ['Option 1', 'Option 2', 'Option 3'],
-          selectedOption: 1
-        }),
-        new MultiChoiceItem({
-          ordinal: 3,
-          choiceName: 'choice2',
-          questionText: 'Question 3',
-          answerOptions: ['Option 4', 'Option 5', 'Option 6']
-        }),
-      ]
-    });
-
-    console.log(JSON.stringify(this.state.survey));
+    this.loadData.bind(this.loadData);
+    this.loadData();
   }
 
-  async loadData(err) {
-    if (err) {
-      this.setState({
-        error: err
-      });
-    } else {
-      var db = this.state.mongoClient.db('simple-survey');
-      var surveys = db.collection('surveys');
-      var results = await surveys.find({surveyId: this.state.surveyId}).toArray();
-      this.mongoClient.close();
+  async loadData() {
+    getReq = new XMLHttpRequest();
+    getReq.owner = this;
+    getReq.responseType = "json"
+    var url = 'http://localhost:3001/surveys?surveyId=' + this.state.surveyId;   
+    getReq.open('GET', url, true);  
+    getReq.onreadystatechange = this.handleLoadDataResponse;
+    getReq.send();
+  }
 
-      if (results.length > 0) {
-        var survey = results[0];
-        this.setState({
-          survey: new Survey(survey)
+  handleLoadDataResponse() {
+    if (getReq.readyState === XMLHttpRequest.DONE) {
+      var getRsp = getReq.response;
+  
+      var survey = new Survey(getRsp.survey);
+      if (survey) {
+        this.owner.setState({
+          survey: survey
         })
       }
     }
@@ -71,14 +50,14 @@ class SurveyHost extends React.Component {
 
     return(
       <div className='survey-host'>
-        <header className='survey-host-header'>
-          <h1>Welcome to Simple Survey</h1>
-        </header>
-        <body className='survey-host-body'>
+        <div className='survey-host-header'>
+          <h1 className="survey-h1">Welcome to Simple Survey</h1>
+        </div>
+        <div className='survey-host-body'>
           <div>
             {content}
           </div>
-        </body>
+        </div>
       </div>
     );
   }
