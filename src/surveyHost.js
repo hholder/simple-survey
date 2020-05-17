@@ -5,57 +5,64 @@ import './survey.css';
 var getReq = null;
 
 class SurveyHost extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
       surveyId: props.surveyId,
-      survey: new Survey({items: []}),
+      surveyName: "",
+      surveyDescription: "",
+      surveyItems: [],
       error: null,
     }
 
-    this.loadData.bind(this.loadData);
+    this.loadData = this.loadData.bind(this);
     this.loadData();
   }
 
   async loadData() {
-    getReq = new XMLHttpRequest();
-    getReq.owner = this;
-    getReq.responseType = "json"
-    var url = 'http://localhost:3001/surveys?surveyId=' + this.state.surveyId;   
-    getReq.open('GET', url, true);  
-    getReq.onreadystatechange = this.handleLoadDataResponse;
-    getReq.send();
+    if (this.state.surveyId) {
+      getReq = new XMLHttpRequest();
+      getReq.owner = this;
+      getReq.responseType = "json"
+      var url = 'http://localhost:3001/surveys?surveyId=' + this.state.surveyId;   
+      getReq.open('GET', url, true);  
+      getReq.onreadystatechange = this.handleLoadDataResponse;
+      getReq.send();
+    }
   }
 
   handleLoadDataResponse() {
     if (getReq.readyState === XMLHttpRequest.DONE) {
       var getRsp = getReq.response;
   
-      var survey = new Survey(getRsp.survey);
-      if (survey) {
+      if (getRsp.survey) {
         this.owner.setState({
-          survey: survey
-        })
+          surveyName: getRsp.survey.name,
+          surveyDescription: getRsp.survey.description,
+          surveyItems: getRsp.survey.items
+        });
       }
     }
   }
 
   render() {
-    var content = null;
-    if (this.state.error) {
-      content = this.state.error.stack;
-    } else {
-      content = this.state.survey.render();
+
+    var survey = {
+      name: this.state.surveyName,
+      description: this.state.surveySescription,
+      items: this.state.surveyItems
     }
 
     return(
-      <div className='survey-host'>
-        <div className='survey-host-header'>
-          <h1 className="survey-h1">Welcome to Simple Survey</h1>
+      <div className="survey-host">
+        <div className="survey-host-header">
+          <h1 className="survey-h1">{this.state.surveyName}</h1>
+          <h3 className="survey-h3">{this.state.surveyDescription}</h3>
         </div>
         <div className='survey-host-body'>
           <div>
-            {content}
+            <Survey surveyId={this.state.surveyId} survey={survey} />
           </div>
         </div>
       </div>

@@ -30,11 +30,11 @@ class FreeTextItem extends SurveyItem {
         var text = this.state.answerValue || "";
 
         return (
-            <div className="free-text-item">
+            <div className="free-text-item" key={this.state.ordinal}>
                 <label className="survey-label" htmlFor="answer-text">{this.state.questionText}</label>
                 <input
                     id="answer-text"
-                    className="text-input"
+                    className="survey-text-input"
                     type="text"
                     value={text}
                     onChange={this.handleTextChange}
@@ -87,7 +87,7 @@ class SingleChoiceItem extends SurveyItem {
         }
 
         return (
-            <div className="single-choice-item">
+            <div className="single-choice-item" key={this.state.ordinal}>
                 <label className="survey-label">{this.state.questionText}</label>
                 <ul className="single-choice-list">{choices}</ul>
             </div>            
@@ -196,15 +196,20 @@ class ItemGroup extends SurveyItem {
 }
 
 class Survey extends React.Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props);
         this.state = {
+            surveyId: props.surveyId,
+            name: props.survey ? props.survey.name : '',
+            description: props.survey ? props.survey.description : '',
             items: [],
             currentItem: null,
             currentItemIndex: 0
         }
 
-        var rawItems = props.items;
+        var rawItems = props.survey ? props.survey.items : [];
         var sortedItems = [];
         for (var i = 0; i < rawItems.length; i++) {
             var item = rawItems[i];
@@ -234,41 +239,17 @@ class Survey extends React.Component {
         sortedItems.sort(compareItems);
         this.state.items = sortedItems;
         this.state.currentItem = sortedItems[0];
+        
+        this.handleNext = this.handleNext.bind(this);
+        this.handleBack = this.handleBack.bind(this);
     }
 
-    render() {
-        var currentItem = 'No Data';
-        if (this.state.currentItem) {
-            currentItem = this.state.currentItem.render();
-        }
-
-        return (
-            <div className="survey">
-                <div className="survey-current-item">
-                    {currentItem}
-                </div>
-                <div className="survey-buttons">
-                    <input
-                      className="survey-button"
-                      type="image"
-                      src="back.png"
-                      alt="back"
-                      onClick={() => this.handleBack()} />
-                    <input
-                      className="survey-button"
-                      type="image"
-                      src="done.png"
-                      alt="done"
-                      onClick={() => this.handleDone()} hidden="1" />
-                    <input
-                      className="survey-button"
-                      type="image"
-                      src="next.png"
-                      alt="next"
-                      onClick={() => this.handleNext()} />
-                </div>
-            </div>
-        )
+    componentDidMount() {
+      this._isMounted = true
+    }
+  
+    componentWillUnmount() {
+      this._isMounted = false
     }
 
     handleBack() {
@@ -284,15 +265,51 @@ class Survey extends React.Component {
     handleNext() {
         if (this.state.currentItemIndex < this.state.items.length - 1) {
             var newItemIndex = this.state.currentItemIndex + 1;
+            var newItem = this.state.items[newItemIndex]
             this.setState({
                 currentItemIndex: newItemIndex,
-                currentItem: this.state.items[newItemIndex]
+                currentItem: newItem
             });
         }
     }
 
     handleDone() {
 
+    }
+
+    render() {
+        var currentItem = 'No Data';
+        if (this.state.currentItem) {
+            currentItem = this.state.currentItem.render();
+        }
+
+        return (
+            <div className="survey" key={this.state.surveyId}>
+                <div className="survey-current-item">
+                    {currentItem}
+                </div>
+                <div className="survey-buttons">
+                    <input
+                      className="survey-button"
+                      type="image"
+                      src="back.png"
+                      alt="back"
+                      onClick={this.handleBack} />
+                    <input
+                      className="survey-button"
+                      type="image"
+                      src="done.png"
+                      alt="done"
+                      onClick={this.handleDone} hidden="1" />
+                    <input
+                      className="survey-button"
+                      type="image"
+                      src="next.png"
+                      alt="next"
+                      onClick={this.handleNext} />
+                </div>
+            </div>
+        )
     }
 }
 
