@@ -1,8 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Link, useParams} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 import './survey.css';
 import SurveyCreator from './surveyCreator.js';
-import SurveyHost from './surveyHost.js';
+import Survey from './survey.js';
 import SurveyList from './surveyList';
 
 function App() {
@@ -56,7 +56,7 @@ function Create() {
 function Complete(props) {
   var searchParams = new URLSearchParams(props.location.search);  
   var surveyId = searchParams.get('surveyId');
-  return <SurveyHost surveyId={surveyId} />;
+  return <Survey surveyId={surveyId} />;
 }
 
 export default App;

@@ -17,14 +17,14 @@
   font-family: Arial;
 }
 
-.survey-host-header {
+.survey-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.survey-host-body {
+.survey-body {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,6 +68,11 @@
   background-color: #2f4f4f;
 }
 
+.survey-list {
+  display: flex;
+  flex-direction: column;
+}
+
 .survey-list-item {
   float: left;
 }
@@ -76,12 +81,14 @@
   color: #f0ffff;
   align-self: center;
   margin-top: 10px;
+  margin-left: 5px;
 }
 
 .survey-desc-p {
   color: #f0ffff;
   align-self: center;
   font-size: 10pt;
+  margin-left: 10px;
 }
 
 .survey-input-item {
@@ -192,6 +199,18 @@
   margin-left: 0;
   margin-right: 0;
   align-self: flex-end;
+}
+
+.multi-choice-list {
+  color: #f0ffff;
+  background-color: #282c34;
+  font-size: 14;
+  width: 40vh;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  align-self: flex-start;
 }
 
 .survey-buttons {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Survey } from './survey.js';
+import Survey from './survey.js';
 import './survey.css';
 
 var getReq = null;
@@ -56,15 +56,7 @@ class SurveyHost extends React.Component {
 
     return(
       <div className="survey-host">
-        <div className="survey-host-header">
-          <h1 className="survey-h1">{this.state.surveyName}</h1>
-          <h3 className="survey-h3">{this.state.surveyDescription}</h3>
-        </div>
-        <div className='survey-host-body'>
-          <div>
-            <Survey surveyId={this.state.surveyId} survey={survey} />
-          </div>
-        </div>
+        <Survey surveyId={this.state.surveyId} />
       </div>
     );
   }

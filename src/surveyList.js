@@ -1,45 +1,42 @@
 import React from 'react';
-import { Survey } from './survey.js';
 import './survey.css';
 
-var getReq
-
 class SurveyList extends React.Component {
+  _getReq = null;
+
   constructor(props) {
     super(props);
     this.state = {
-      surveys: []
+      surveyDataCollection: []
     }
 
-    this.loadData.bind(this.loadData);
+    this.loadData = this.loadData.bind(this);
+    this.handleLoadDataResponse = this.handleLoadDataResponse.bind(this);
+
     this.loadData();
   }  
 
   async loadData() {
-    getReq = new XMLHttpRequest();
-    getReq.owner = this;
-    getReq.responseType = "json"
+    this._getReq = new XMLHttpRequest();
+    this._getReq.responseType = "json"
     var url = 'http://localhost:3001/surveyList';   
-    getReq.open('GET', url, true);  
-    getReq.onreadystatechange = this.handleLoadDataResponse;
-    getReq.send();
+    this._getReq.open('GET', url, true);  
+    this._getReq.onreadystatechange = this.handleLoadDataResponse;
+    this._getReq.send();
   }
 
   handleLoadDataResponse() {
-    if (getReq.readyState === XMLHttpRequest.DONE) {
-      var getRsp = getReq.response;
+    if (this._getReq.readyState === XMLHttpRequest.DONE) {
+      var getRsp = this._getReq.response;
   
       if (getRsp) {
         for (var i = 0; i < getRsp.length; i++) {
           var surveyData = getRsp[i];
-          if (surveyData) {            
-            var survey = new Survey(surveyData);
-            var surveys = this.owner.state.surveys.concat(survey);
-            if (survey) {
-              this.owner.setState({
-                surveys: surveys
-              })
-            }
+          if (surveyData) {
+            var surveys = this.state.surveyDataCollection.concat(surveyData);
+            this.setState({
+              surveyDataCollection: surveys
+            })
           }
         }
       }
@@ -48,14 +45,14 @@ class SurveyList extends React.Component {
 
   render() {
     var surveyListContent = []
-    for (var i = 0; i < this.state.surveys.length; i++) {
-      var surveyId = this.state.surveys[i].state.surveyId;
+    for (var i = 0; i < this.state.surveyDataCollection.length; i++) {
+      var surveyId = this.state.surveyDataCollection[i].surveyId;
       var surveyUrl = '/complete?surveyId=' + surveyId;
 
       var item =
         <div className="survey-list-item" key={surveyId}>
-          <h2 className="survey-h2"><a href={surveyUrl}>{this.state.surveys[i].state.name}</a></h2>
-          <p className="survey-desc-p">{this.state.surveys[i].state.description}</p>
+          <h2 className="survey-h2"><a href={surveyUrl}>{this.state.surveyDataCollection[i].survey.name}</a></h2>
+          <p className="survey-desc-p">{this.state.surveyDataCollection[i].survey.description}</p>
         </div>
 
         surveyListContent = surveyListContent.concat(item);
