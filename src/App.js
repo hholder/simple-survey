@@ -1,10 +1,9 @@
 import React from 'react';
-import { FreeTextItem, SingleChoiceItem, MultiChoiceItem, Survey } from './survey.js';
-import { BrowserRouter as Router, Switch, Route, Link, useParams} from "react-router-dom";
-import logo from './logo.svg';
+import { BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 import './survey.css';
 import SurveyCreator from './surveyCreator.js';
-import SurveyHost from './surveyHost.js';
+import Survey from './survey.js';
+import SurveyList from './surveyList';
 
 function App() {
 
@@ -42,7 +41,12 @@ function App() {
 }
 
 function Home() {
-  return <h1 className="survey-h1">Welcome to Simple Survey</h1>;
+  return (
+    <div>
+      <h1 className="survey-h1">Welcome to Simple Survey</h1>
+      <SurveyList />
+    </div>
+    );
 }
 
 function Create() {
@@ -52,7 +56,7 @@ function Create() {
 function Complete(props) {
   var searchParams = new URLSearchParams(props.location.search);  
   var surveyId = searchParams.get('surveyId');
-  return <SurveyHost surveyId={surveyId} />;
+  return <Survey surveyId={surveyId} />;
 }
 
 export default App;

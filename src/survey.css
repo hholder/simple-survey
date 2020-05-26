@@ -17,9 +17,16 @@
   font-family: Arial;
 }
 
-.survey-host-header {
+.survey-header {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.survey-body {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -61,26 +68,64 @@
   background-color: #2f4f4f;
 }
 
-
-.question-input {
+.survey-list {
+  display: flex;
   flex-direction: column;
-  align-items: left;
-  margin-left: 5vw;
-  width: 60vw;
 }
 
-.question-display {
-  flex-direction: column;
-  align-items: left;
-  margin-right: 5vw;
-  width: 40vw;
+.survey-list-item {
+  float: left;
 }
 
-.question-input-item {
+.survey-h2 {
+  color: #f0ffff;
+  align-self: center;
+  margin-top: 10px;
+  margin-left: 5px;
+}
+
+.survey-desc-p {
+  color: #f0ffff;
+  align-self: center;
+  font-size: 10pt;
+  margin-left: 10px;
+}
+
+.survey-input-item {
   flex-direction: column;
   align-items: left;
   padding-top: 5px;
   padding-bottom: 5px;
+}
+
+.survey-metadata {
+  flex-direction: column;
+  align-items: left;
+  margin-top: 10px;
+  margin-left: 5vw;
+  width: 50vw;
+  height: 100vh;
+}
+
+.input-group {
+  flex-direction: column;
+  align-items: left;
+  margin-left: 5vw;
+  width: 50vw;
+}
+
+.item-group-separator {
+  margin-left: 5vw;
+  margin-right: 5vw;
+}
+
+.question-display {
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 10px;
+  margin-right: 5vw;
+  width: 35vw;
+  height: 100vh;
 }
 
 .question-input-button {
@@ -102,6 +147,7 @@
 .question-list {
   width: 40vw;
   display: inline-block;
+  margin-bottom: 10px;
 }
 
 .survey-label {
@@ -127,7 +173,10 @@
 }
 
 .free-text-item {
-  line-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  margin-bottom: 20px;
 }
 
 .survey-text-input {
@@ -150,6 +199,18 @@
   margin-left: 0;
   margin-right: 0;
   align-self: flex-end;
+}
+
+.multi-choice-list {
+  color: #f0ffff;
+  background-color: #282c34;
+  font-size: 14;
+  width: 40vh;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  align-self: flex-start;
 }
 
 .survey-buttons {
